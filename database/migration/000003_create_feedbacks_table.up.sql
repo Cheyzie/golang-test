@@ -1,0 +1,7 @@
+CREATE TABLE feedbacks
+(
+    id BIGINT PRIMARY KEY NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    feedback_text VARCHAR(255) NOT NULL,
+    source VARCHAR(255) NOT NULL
+)
