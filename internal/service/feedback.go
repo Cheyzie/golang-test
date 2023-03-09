@@ -4,6 +4,7 @@ import (
 	"github.com/Cheyzie/golang-test/internal/cache"
 	"github.com/Cheyzie/golang-test/internal/model"
 	"github.com/Cheyzie/golang-test/internal/repository"
+	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,9 +21,8 @@ func (s *FeedbackService) GetFeedbackById(id int) (model.Feedback, error) {
 	feedback, err := s.cache.GetFeedback(id)
 
 	if err == nil {
-		logrus.Info("feedback from cache")
 		return feedback, err
-	} else {
+	} else if err != memcache.ErrCacheMiss {
 		logrus.Error(err.Error())
 	}
 
