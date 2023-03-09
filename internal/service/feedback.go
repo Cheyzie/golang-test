@@ -1,20 +1,39 @@
 package service
 
 import (
+	"github.com/Cheyzie/golang-test/internal/cache"
 	"github.com/Cheyzie/golang-test/internal/model"
 	"github.com/Cheyzie/golang-test/internal/repository"
+	"github.com/sirupsen/logrus"
 )
 
 type FeedbackService struct {
-	repo repository.Feedback
+	repo  repository.Feedback
+	cache cache.Feedback
 }
 
-func NewFeedbackService(repo repository.Feedback) *FeedbackService {
-	return &FeedbackService{repo: repo}
+func NewFeedbackService(repo repository.Feedback, cache cache.Feedback) *FeedbackService {
+	return &FeedbackService{repo: repo, cache: cache}
 }
 
 func (s *FeedbackService) GetFeedbackById(id int) (model.Feedback, error) {
-	return s.repo.GetById(id)
+	feedback, err := s.cache.GetFeedback(id)
+
+	if err == nil {
+		logrus.Info("feedback from cache")
+		return feedback, err
+	} else {
+		logrus.Error(err.Error())
+	}
+
+	feedback, err = s.repo.GetById(id)
+	if err != nil {
+		return feedback, err
+	}
+
+	s.cache.SetFeedback(feedback.Id, feedback)
+
+	return feedback, err
 }
 
 func (s *FeedbackService) GetAllFeedbacks() ([]model.Feedback, error) {

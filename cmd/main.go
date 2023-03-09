@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/Cheyzie/golang-test/internal/cache"
 	"github.com/Cheyzie/golang-test/internal/handler"
 	"github.com/Cheyzie/golang-test/internal/repository"
 	"github.com/Cheyzie/golang-test/internal/server"
@@ -38,8 +39,14 @@ func main() {
 		logrus.Fatalf("error occured on db connection: %s", err)
 	}
 
+	mc := cache.NewMemcacheClient(cache.MemcacheConfig{
+		Host: viper.GetString("memcache.host"),
+		Port: viper.GetString("memcache.port"),
+	})
+
 	repo := repository.NewRepository(db)
-	service := service.NewService(repo)
+	cacheInstance := cache.NewCache(mc)
+	service := service.NewService(repo, cacheInstance)
 	handler := handler.NewHandler(service)
 
 	srv := new(server.Server)

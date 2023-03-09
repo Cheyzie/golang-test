@@ -7,3 +7,7 @@ db:
   port: "5432"
   dbname: "feedback_app"
   sslmode: "disable"
+
+memcache:
+  host: "127.0.0.1"
+  port: "11211"
