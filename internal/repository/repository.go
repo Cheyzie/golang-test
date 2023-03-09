@@ -11,12 +11,22 @@ type User interface {
 	GetByCredentials(email, password_hash string) (model.User, error)
 }
 
+type Feedback interface {
+	Create(feedback model.Feedback) (int, error)
+	GetAllPaginate(limit, offset string) ([]model.Feedback, error)
+	GetAll() ([]model.Feedback, error)
+	GetCount() (int, error)
+	GetById(id int) (model.Feedback, error)
+}
+
 type Repository struct {
 	User
+	Feedback
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		User: NewUserPostgres(db),
+		User:     NewUserPostgres(db),
+		Feedback: NewFeedbackPostgres(db),
 	}
 }

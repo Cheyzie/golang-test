@@ -11,12 +11,21 @@ type Authorization interface {
 	ParseToken(access_token string) (int, error)
 }
 
+type Feedback interface {
+	CreateFeedback(feedback model.Feedback) (int, error)
+	GetAllFeedbacks() ([]model.Feedback, error)
+	GetAllFeedbacksPaginate(limit, offset string) (model.AllFeedbacksResponse, error)
+	GetFeedbackById(id int) (model.Feedback, error)
+}
+
 type Service struct {
 	Authorization
+	Feedback
 }
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthorizationService(repo.User),
+		Feedback:      NewFeedbackService(repo.Feedback),
 	}
 }

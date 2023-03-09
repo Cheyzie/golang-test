@@ -36,6 +36,16 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		api.POST("/signin", h.signIn)
 		api.POST("/signup", h.signUp)
+		feedback := api.Group("/feedbacks")
+		{
+
+			feedback.POST("/", h.CreateFeedback)
+			protected := feedback.Group("/", h.userIdentity)
+			{
+				protected.GET("/:id", h.GetFeedbackById)
+				protected.GET("/", h.GetAllFeedbacks)
+			}
+		}
 	}
 
 	return router

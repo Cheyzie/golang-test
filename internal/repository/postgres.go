@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	usersTable = "users"
+	usersTable     = "users"
+	feedbacksTable = "feedbacks"
 )
 
 type SqlConfig struct {
