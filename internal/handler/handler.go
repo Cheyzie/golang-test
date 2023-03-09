@@ -42,6 +42,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 }
 
 func newErrorResponse(ctx *gin.Context, statusCode int, message string, err error) {
-	logrus.Error(err.Error())
+	if err != nil {
+		logrus.Error(err.Error())
+	}
 	ctx.AbortWithStatusJSON(statusCode, model.Error{Message: message})
 }

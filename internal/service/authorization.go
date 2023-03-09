@@ -2,6 +2,7 @@ package service
 
 import (
 	"crypto/sha1"
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -13,7 +14,7 @@ import (
 
 type tokenClaims struct {
 	jwt.RegisteredClaims
-	id int
+	UserId int
 }
 
 type AuthorizationService struct {
@@ -60,4 +61,21 @@ func (s *AuthorizationService) generatePasswordHahs(passwor string) string {
 	hash.Write([]byte(passwor))
 
 	return fmt.Sprintf("%x", hash.Sum([]byte(s.salt)))
+}
+
+func (s *AuthorizationService) ParseToken(access_token string) (int, error) {
+	token, err := jwt.ParseWithClaims(access_token, &tokenClaims{}, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid signing method")
+		}
+		return []byte(s.signingKey), nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	claims, ok := token.Claims.(*tokenClaims)
+	if !ok {
+		return 0, errors.New("token claims not of type *tokenClaims")
+	}
+	return claims.UserId, nil
 }
