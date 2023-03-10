@@ -47,7 +47,7 @@ func (s *AuthorizationService) GenerateToken(email, password string) (model.Toke
 
 	access_token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenClaims{
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.token_ttl)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 		user.Id,

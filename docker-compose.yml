@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  app:
+    build: ./
+    command: 
+      - /bin/sh
+      - -c
+      - |
+        ./check-out-db.sh db
+        migrate -source file://database/migration -database postgres://feedback_app:qwerty1234@db:5432/feedback_app?sslmode=disable up
+        ./app
+    ports:
+      - 80:80
+    environment:
+      - DB_PASSWORD=qwerty1234
+    depends_on:
+      - db
+      - memcached
+    restart: always
+  db:
+    image: postgres
+    volumes:
+      - sqldata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=qwerty1234
+      - POSTGRES_USER=feedback_app
+      - POSTGRES_DB=feedback_app
+    ports:
+      - 5434:5432
+    restart: always
+
+  memcached:
+    image: memcached:latest
+    ports:
+        - 11213:11211
+    restart: always
+
+volumes:
+  sqldata:
+
+

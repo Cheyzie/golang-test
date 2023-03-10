@@ -1,13 +1,13 @@
 server:
-  port: "8000"
+  port: "80"
 
 db:
-  username: "cheyzie"
-  host: "127.0.0.1"
+  username: "feedback_app"
+  host: "db"
   port: "5432"
   dbname: "feedback_app"
   sslmode: "disable"
 
 memcache:
-  host: "127.0.0.1"
+  host: "memcached"
   port: "11211"
