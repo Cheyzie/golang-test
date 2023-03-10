@@ -15,6 +15,6 @@ type Feedback struct {
 }
 
 type AllFeedbacksResponse struct {
-	Meta      Meta
-	Feedbacks []Feedback
+	Meta      Meta       `json:"meta"`
+	Feedbacks []Feedback `json:"feedbacks"`
 }

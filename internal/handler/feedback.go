@@ -37,7 +37,7 @@ func (h *Handler) GetAllFeedbacks(ctx *gin.Context) {
 			newErrorResponse(ctx, http.StatusInternalServerError, "somthing went wrong", err)
 			return
 		}
-		ctx.JSON(http.StatusOK, feedbacks)
+		ctx.JSON(http.StatusOK, gin.H{"feedbacks": feedbacks})
 		return
 	} else {
 		feedbacks, err := h.service.GetAllFeedbacksPaginate(limit, offset)
