@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/Cheyzie/golang-test/internal/broker"
 	"github.com/Cheyzie/golang-test/internal/cache"
 	"github.com/Cheyzie/golang-test/internal/model"
 	"github.com/Cheyzie/golang-test/internal/repository"
@@ -9,12 +10,13 @@ import (
 )
 
 type FeedbackService struct {
-	repo  repository.Feedback
-	cache cache.Feedback
+	repo     repository.Feedback
+	cache    cache.Feedback
+	producer broker.FeedbackProducer
 }
 
-func NewFeedbackService(repo repository.Feedback, cache cache.Feedback) *FeedbackService {
-	return &FeedbackService{repo: repo, cache: cache}
+func NewFeedbackService(repo repository.Feedback, cache cache.Feedback, producer broker.FeedbackProducer) *FeedbackService {
+	return &FeedbackService{repo: repo, cache: cache, producer: producer}
 }
 
 func (s *FeedbackService) GetFeedbackById(id int) (model.Feedback, error) {
@@ -66,5 +68,11 @@ func (s *FeedbackService) GetAllFeedbacksPaginate(limit, offset string) (model.A
 }
 
 func (s *FeedbackService) CreateFeedback(feedback model.Feedback) (int, error) {
-	return s.repo.Create(feedback)
+	id, err := s.repo.Create(feedback)
+	if err != nil {
+		return id, err
+	}
+	feedback.Id = id
+	s.producer.SendFeedback("feedbacks", feedback)
+	return id, err
 }

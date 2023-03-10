@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/Cheyzie/golang-test/internal/broker"
 	"github.com/Cheyzie/golang-test/internal/cache"
 	"github.com/Cheyzie/golang-test/internal/handler"
 	"github.com/Cheyzie/golang-test/internal/repository"
@@ -44,9 +45,13 @@ func main() {
 		Port: viper.GetString("memcache.port"),
 	})
 
+	kd := broker.NewKafkaDriver(viper.GetString("kafka.host"))
+
+	producer := broker.NewProducer(kd)
+
 	repo := repository.NewRepository(db)
 	cacheInstance := cache.NewCache(mc)
-	service := service.NewService(repo, cacheInstance)
+	service := service.NewService(repo, cacheInstance, producer)
 	handler := handler.NewHandler(service)
 
 	srv := new(server.Server)

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/Cheyzie/golang-test/internal/broker"
 	"github.com/Cheyzie/golang-test/internal/cache"
 	"github.com/Cheyzie/golang-test/internal/model"
 	"github.com/Cheyzie/golang-test/internal/repository"
@@ -24,9 +25,9 @@ type Service struct {
 	Feedback
 }
 
-func NewService(repo *repository.Repository, cache *cache.Cache) *Service {
+func NewService(repo *repository.Repository, cache *cache.Cache, producer *broker.Producer) *Service {
 	return &Service{
 		Authorization: NewAuthorizationService(repo.User),
-		Feedback:      NewFeedbackService(repo.Feedback, cache.Feedback),
+		Feedback:      NewFeedbackService(repo.Feedback, cache.Feedback, producer.FeedbackProducer),
 	}
 }
