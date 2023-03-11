@@ -2,7 +2,11 @@
 
 ## Launch
 
+copy .env.example to .env file
 docker compose up
+
+To check kafka queue:
+docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --topic feedbacks --from-beginning
 
 ## Endpoints:
 
